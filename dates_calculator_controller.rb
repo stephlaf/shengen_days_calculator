@@ -3,16 +3,24 @@
 class DatesCalculatorController
   class InvalidDatesError < StandardError; end
 
-  def initialize(start_date, end_date)
-    @start_date = start_date
-    @end_date = end_date
+  def initialize(dates)
+    @dates = [dates]
 
-    validate_dates
+    parse_dates
+    pp @stays
+    # validate_dates
   end
 
   def validate_dates
     invalid = @start_date > @end_date
     raise InvalidDatesError, 'StartDate must be before EndDate' if invalid
+  end
+
+  def parse_dates
+    @stays = @dates.map do |range|
+      from_str, to_str = range.split(':')
+      [Date.parse(from_str), Date.parse(to_str)]
+    end
   end
 
   def calculate_next_possible_entry_date
@@ -53,8 +61,3 @@ end
 # 2025-01-11:2025-01-30
 # 2025-03-01:2025-03-30
 # 2025-05-01:2025-05-30
-
-# stays = ARGV.map do |range|
-#   from_str, to_str = range.split(':')
-#   [Date.parse(from_str), Date.parse(to_str)]
-# end
